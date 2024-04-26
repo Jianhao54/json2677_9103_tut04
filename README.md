@@ -27,4 +27,6 @@ This is my first local change to the repo
 
 [Link Text] (google)
 
+![An image of a cat](assets/kitty.jpg)
+
 ![An image of the Mona Lisa](assets/Mona_Lisa_by_Leonardo_da_Vinci_500_x_700.jpg)
