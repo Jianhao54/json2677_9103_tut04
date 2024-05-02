@@ -18,9 +18,10 @@ I referred to the example of particles on p5.js and the sketch code of the inspi
 ![Coding technique screenshot1](assets/Screenshot3.png)
 ![Coding technique screenshot2](assets/Screenshot4.png)
 ![Coding technique screenshot3](assets/Screenshot5.png)
-![Coding technique screenshot4](assets/screenshot6.png)
 
 [Inspiration link1] (https://p5js.org/examples/simulate-particles.html)
+
+![Coding technique screenshot4](assets/screenshot6.png)
 
 [Inspiration link2] (https://openprocessing.org/sketch/2232980)
 
