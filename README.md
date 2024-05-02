@@ -12,10 +12,11 @@ The reason why I chose this inspiration because I'm planning to choose 'The Scre
 ![2nd image of the inspiration image](assets/Screenshot2.png)
 
 ## Coding Technique Exploration
-```
-I referred to the example of particles on p5.js and the sketch code of the inspiration which share similar feature of the animated particles. The coding technique used in this sketch is primarily object-oriented programming (OOP) with the use of classes and objects. The 'Particle' class is defined to encapsulate the behavior and properties of individual particles.The 'constructor' method initializes the properties of each particle object when it is instantiated. Methods like 'show()', 'move()', and 'isDead()' define the behavior of particles. These methods operate on the properties of the object they belong to. 'if()' and 'for loop' function is also provided to create multiple particles in motion.
-```
-[Inspiration link] (https://p5js.org/examples/simulate-particles.html)
-[Inspiration link] (https://openprocessing.org/sketch/2232980)
+
+>I referred to the example of particles on p5.js and the sketch code of the inspiration which share similar feature of the animated particles. The coding technique used in this sketch is primarily object-oriented programming (OOP) with the use of classes and objects. The 'Particle' class is defined to encapsulate the behavior and properties of individual particles.The 'constructor' method initializes the properties of each particle object when it is instantiated. Methods like 'show()', 'move()', and 'isDead()' define the behavior of particles. These methods operate on the properties of the object they belong to. 'if()' and 'for loop' function is also provided to create multiple particles in motion.
+
+[Inspiration link1] (https://p5js.org/examples/simulate-particles.html)
+
+[Inspiration link2] (https://openprocessing.org/sketch/2232980)
 
 ![Codingtechiniquescreenshot](assets/coding screenshot.png)
