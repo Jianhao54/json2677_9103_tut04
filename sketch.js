@@ -8,7 +8,7 @@ var img2Movable, img3Movable, img4Movable; // Instances of the movable images
 
 // Preload images
 function preload() {
-  img = loadImage("assets/1.jpg");
+  img = loadImage("assets/painting.jpg");
   img2 = loadImage("assets/gull1.png");
   img3 = loadImage("assets/gull2.png");
   img4 = loadImage("assets/boat.png");
@@ -36,6 +36,8 @@ function setup() {
 
 // Draw function
 function draw() {
+  background(255); // Clear the background
+
   // If the wave effect hasn't started, draw the initial wave
   if (!waveEffect.startWave) {
     waveEffect.drawInitialWave();
@@ -58,40 +60,56 @@ function draw() {
 
   // Draw the pixelation effect for the fifth image
   img5Pixelation.drawPixelatedImage(WIDTH * 0.65, HEIGHT * 0.42, 0.5);
+
+  // Apply black and white filter to the entire canvas
+  applyBlackAndWhiteFilter();
+
+  // Draw black rectangles on all four sides
+  fill(0); // Set fill color to black
+  rect(0, 0, WIDTH, 50); // Top
+  rect(0, HEIGHT - 50, WIDTH, 50); // Bottom
+  rect(0, 0, 50, HEIGHT); // Left
+  rect(WIDTH - 50, 0, 50, HEIGHT); // Right
 }
 
-// Fisher-Yates Shuffle algorithm to shuffle an array, this technique was not covered in class(this technique is from https://www.tutorialspoint.com/data_structures_algorithms/dsa_fisher_yates_shuffle_algorithm.htm)
+// Apply black and white filter to the entire canvas
+function applyBlackAndWhiteFilter() {
+  loadPixels(); // Load the pixel data for the canvas
+  for (let i = 0; i < pixels.length; i += 4) { // Iterate through every pixel (4 values per pixel: R, G, B, and A)
+    let avg = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3; // Calculate the average value of R, G, and B components
+    pixels[i] = avg; // Set R component to the average
+    pixels[i + 1] = avg; // Set G component to the average
+    pixels[i + 2] = avg; // Set B component to the average
+  }
+  updatePixels(); // Update the canvas with the modified pixel data
+}
+
+// Fisher-Yates Shuffle algorithm to shuffle an array
 function shuffle(array, shouldShuffle) {
-  // If shouldShuffle is false, return the original array without shuffling
   if (!shouldShuffle) return array;
-  // Start from the last element and iterate backwards
   for (let i = array.length - 1; i > 0; i--) {
-    // Generate a random integer j between 0 and i
     const j = Math.floor(Math.random() * (i + 1));
-    // Swap array[i] and array[j]
     [array[i], array[j]] = [array[j], array[i]];
   }
-  // Return the shuffled array
   return array;
 }
 
 // ImagePixelation class to handle the pixelated drawing of the painting
 class ImagePixelation {
   constructor(img, pixelSize) {
-    this.img = img; // Image to be processed
-    this.pixelSize = pixelSize; // Size of the pixel blocks
+    this.img = img;
+    this.pixelSize = pixelSize;
   }
 
-  // Draw a pixelated image
   drawPixelatedImage(x, y, scale) {
-    let scaledWidth = this.img.width * scale; // Scaled width
-    let scaledHeight = this.img.height * scale; // Scaled height
-    this.img.loadPixels(); // Load the image pixels
+    let scaledWidth = this.img.width * scale;
+    let scaledHeight = this.img.height * scale;
+    this.img.loadPixels();
     for (let py = 0; py < scaledHeight; py += this.pixelSize) {
       for (let px = 0; px < scaledWidth; px += this.pixelSize) {
-        const imgColor = this.img.get(px / scale, py / scale); // Get the color of the pixel
-        fill(imgColor); // Set the fill color
-        rect(px + x - scaledWidth / 2, py + y - scaledHeight / 2, this.pixelSize, this.pixelSize); // Draw the pixel block
+        const imgColor = this.img.get(px / scale, py / scale);
+        fill(imgColor);
+        rect(px + x - scaledWidth / 2, py + y - scaledHeight / 2, this.pixelSize, this.pixelSize);
       }
     }
   }
@@ -100,89 +118,87 @@ class ImagePixelation {
 // MovableImage class to handle the position and movement of an image
 class MovableImage {
   constructor(img, x, y, direction, speed, widthScale, heightScale) {
-    this.img = img; // Image to be processed
-    this.x = x; // Initial x-coordinate
-    this.y = y; // Initial y-coordinate
-    this.direction = direction; // Movement direction
-    this.speed = speed; // Movement speed
-    this.width = img.width * widthScale; // Scaled width
-    this.height = img.height * heightScale; // Scaled height
+    this.img = img;
+    this.x = x;
+    this.y = y;
+    this.direction = direction;
+    this.speed = speed;
+    this.width = img.width * widthScale;
+    this.height = img.height * heightScale;
   }
 
-  // Update the image position
   updatePosition(limitX) {
-    this.x += this.direction * this.speed; // Update the x-coordinate based on direction and speed
-    if (this.x > limitX + 50 || this.x < limitX - 50) { // If out of the limit range
-      this.direction *= -1; // Reverse direction
+    this.x += this.direction * this.speed;
+    if (this.x > limitX + 50 || this.x < limitX - 50) {
+      this.direction *= -1;
     }
   }
 
-  // Draw the image
   draw() {
-    image(this.img, this.x, this.y, this.width, this.height); // Draw the image
+    image(this.img, this.x, this.y, this.width, this.height);
   }
 }
 
 // WaveEffect class to handle the wave effect
 class WaveEffect {
   constructor(img, pixelSize) {
-    this.img = img; // Image to be processed
-    this.pixelSize = pixelSize; // Size of the pixel blocks
-    this.pixelsToDraw = []; // Array of pixels to be drawn
-    this.totalPixels = 0; // Total number of pixels
-    this.drawnPixels = 0; // Number of pixels drawn
-    this.startWave = false; // Whether the wave effect has started
+    this.img = img;
+    this.pixelSize = pixelSize;
+    this.pixelsToDraw = [];
+    this.totalPixels = 0;
+    this.drawnPixels = 0;
+    this.startWave = false;
 
-    this.initializePixels(); // Initialize the pixels
+    this.initializePixels();
   }
 
-  // Initialize the pixels
   initializePixels() {
     for (let y = 0; y < this.img.height; y += this.pixelSize) {
       for (let x = 0; x < this.img.width; x += this.pixelSize) {
-        const frequency = random(0.01, 0.05); // Random frequency
-        const amplitude = 20 + (x % this.pixelSize) * 10; // Amplitude
-        const oy = random(-30, 30); // Pixel offset
-        this.pixelsToDraw.push({x: x, y: y, frequency: frequency, offset: 0, amplitude: amplitude, oy: oy}); // Add pixel to array
+        const frequency = random(0.01, 0.05);
+        const amplitude = 20 + (x % this.pixelSize) * 10;
+        const oy = random(-30, 30);
+        this.pixelsToDraw.push({x: x, y: y, frequency: frequency, offset: 0, amplitude: amplitude, oy: oy});
       }
     }
-    shuffle(this.pixelsToDraw, true); // Shuffle the pixel array
-    this.totalPixels = this.pixelsToDraw.length; // Set the total number of pixels
+    shuffle(this.pixelsToDraw, true);
+    this.totalPixels = this.pixelsToDraw.length;
   }
 
-  // Draw the initial wave
   drawInitialWave() {
-    for (let i = 0; i < 100; i++) { // Draw 100 pixel blocks per frame
-      if (this.drawnPixels >= this.totalPixels) { // If all pixel blocks are drawn
-        this.startWave = true; // Start the wave effect
+    for (let i = 0; i < 100; i++) {
+      if (this.drawnPixels >= this.totalPixels) {
+        this.startWave = true;
         break;
       }
-      let pixel = this.pixelsToDraw[this.drawnPixels]; // Get the current pixel
-      let pix = this.img.get(pixel.x, pixel.y); // Get the color of the pixel
-      fill(pix); // Set the fill color
-      rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize); // Draw the pixel block
-      this.drawnPixels++; // Update the number of pixels drawn
+      let pixel = this.pixelsToDraw[this.drawnPixels];
+      let pix = this.img.get(pixel.x, pixel.y);
+      fill(pix);
+      rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize);
+      this.drawnPixels++;
     }
   }
 
-  // Draw the wave effect
   drawWave() {
-    background(255); // Set the background color to white
+    background(255);
     for (let i = 0; i < this.pixelsToDraw.length; i++) {
-      let pixel = this.pixelsToDraw[i]; // Get the current pixel
-      let pix = this.img.get(pixel.x, pixel.y); // Get the color of the pixel
-      fill(pix); // Set the fill color
-      if (pixel.y > 400 + pixel.oy) { // If the pixel position exceeds the specified range
-        let waveHeight = map(noise(pixel.offset), 0, 1, -pixel.amplitude, pixel.amplitude); // Calculate the wave height
-        rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize); // Draw the original position pixel block
-        rect(pixel.x, pixel.y + waveHeight, this.pixelSize, this.pixelSize); // Draw the pixel block after the wave
-        pixel.offset += pixel.frequency; // Update the offset
+      let pixel = this.pixelsToDraw[i];
+      let pix = this.img.get(pixel.x, pixel.y);
+      fill(pix);
+      if (pixel.y > 400 + pixel.oy) {
+        let waveHeight = map(noise(pixel.offset), 0, 1, -pixel.amplitude, pixel.amplitude);
+        rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize);
+        rect(pixel.x, pixel.y + waveHeight, this.pixelSize, this.pixelSize);
+        pixel.offset += pixel.frequency;
       } else {
-        rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize); // Draw the original position pixel block
+        rect(pixel.x, pixel.y, this.pixelSize, this.pixelSize);
       }
     }
   }
 }
+
+
+
 
 
 
